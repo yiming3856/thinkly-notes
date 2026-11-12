@@ -38,10 +38,6 @@ export const menuLinks: { path: string; title: string }[] = [
 		title: "首页",
 	},
 	{
-		path: "/about/",
-		title: "关于",
-	},
-	{
 		path: "/posts/",
 		title: "博客",
 	},
@@ -52,6 +48,10 @@ export const menuLinks: { path: string; title: string }[] = [
 	{
 		path: "/tags/",
 		title: "标签",
+	},
+	{
+		path: "/about/",
+		title: "关于",
 	},
 ];
 
