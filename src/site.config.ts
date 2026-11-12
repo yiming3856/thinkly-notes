@@ -49,6 +49,10 @@ export const menuLinks: { path: string; title: string }[] = [
 		path: "/notes/",
 		title: "笔记",
 	},
+	{
+		path: "/tags/",
+		title: "标签",
+	},
 ];
 
 // https://expressive-code.com/reference/configuration/
