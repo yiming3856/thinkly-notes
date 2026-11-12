@@ -2,7 +2,6 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import PostPreview from "@/components/blog/PostPreview.astro";
 import Note from "@/components/note/Note.astro";
-import SocialList from "@/components/SocialList.astro";
 import { getAllPosts } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
@@ -30,19 +29,18 @@ const latestNotes = allNotes
 ---
 
 <PageLayout meta={{ title: "首页" }}>
-	<section>
-		<h1 class="title mb-12">你好，欢迎来到 Thinkly Log</h1>
-		<p class="mb-4">
-			个人博客，用来记录思考、学习和日常。这段文字是占位内容，
+	<section class="-mt-4">
+		<h1 class="title mb-12">【标题占位】你好，欢迎来到 Thinkly Log</h1>
+		<p class="mb-4 leading-[1.9]">
+			【简介占位】这里是我的个人博客，用来记录思考、学习和日常。这段文字是占位内容，
 			请替换成你自己的简介：你是谁、做什么、这个博客会写些什么。
 		</p>
-		<SocialList />
 	</section>
 	{
 		pinnedPosts.length > 0 && (
 			<section class="mt-16">
 				<h2 class="title mb-6 text-xl">置顶文章</h2>
-				<ul class="space-y-4" role="list">
+				<ul class="space-y-6" role="list">
 					{pinnedPosts.map((p) => (
 						<li class="grid gap-1 sm:grid-cols-[auto_1fr]">
 							<PostPreview post={p} />
@@ -54,7 +52,7 @@ const latestNotes = allNotes
 	}
 	<section class="mt-16">
 		<h2 class="title text-accent mb-6 text-xl"><a href="/posts/">文章</a></h2>
-		<ul class="space-y-4" role="list">
+		<ul class="space-y-6" role="list">
 			{
 				latestPosts.map((p) => (
 					<li class="grid gap-1 sm:grid-cols-[auto_1fr]">
