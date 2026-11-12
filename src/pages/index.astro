@@ -52,7 +52,7 @@ const latestNotes = allNotes
 		)
 	}
 	<section class="mt-16">
-		<h2 class="title text-accent mb-6 text-xl"><a href="/posts/">文章</a></h2>
+		<h2 class="title text-accent mb-6 text-xl"><a href="/posts/">最近更新</a></h2>
 		<ul class="space-y-6" role="list">
 			{
 				latestPosts.map((p) => (
@@ -67,7 +67,7 @@ const latestNotes = allNotes
 		latestNotes.length > 0 && (
 			<section class="mt-16">
 				<h2 class="title text-accent mb-6 text-xl">
-					<a href="/notes/">笔记</a>
+					<a href="/notes/">日常笔记</a>
 				</h2>
 				<ul class="space-y-6" role="list">
 					{latestNotes.map((note) => (
