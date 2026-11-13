@@ -24,4 +24,17 @@ bash <(curl -Ls https://raw.githubusercontent.com/alireza0/s-ui/master/install.s
 bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
 
 ```
+
+五合一节点代码：
+
+```bash
+bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
+```
+
+小钢炮代码：
+
+```bash
+bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
+```
+
 如有更好用的面板会更新在这里。
