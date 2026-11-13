@@ -5,7 +5,7 @@ import FormattedDate from "@/components/FormattedDate.astro";
 
 interface Props {
 	content: CollectionEntry<"post">;
-	readingTime: string;
+	readingTime?: string | undefined;
 }
 
 const {
@@ -13,9 +13,9 @@ const {
 	readingTime,
 } = Astro.props;
 
-// readingTime 原本是 "3 min read" 这样的英文，取出数字，改成中文显示
-const minutes = readingTime.match(/\d+/)?.[0];
-const readingTimeText = minutes ? `约 ${minutes} 分钟阅读` : readingTime;
+// 阅读时间可能是空的（例如文章里没有文字），所以用 ?. 保护，空的时候不显示
+const minutes = readingTime?.match(/\d+/)?.[0];
+const readingTimeText = minutes ? `约 ${minutes} 分钟阅读` : "";
 ---
 
 {
@@ -38,8 +38,8 @@ const readingTimeText = minutes ? `约 ${minutes} 分钟阅读` : readingTime;
 </h1>
 <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
 	<p class="font-semibold">
-		<FormattedDate date={data.publishDate} /> /{" "}
-		{readingTimeText}
+		<FormattedDate date={data.publishDate} />
+		{readingTimeText && ` / ${readingTimeText}`}
 	</p>
 	{
 		data.updatedDate && (
