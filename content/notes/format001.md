@@ -2,7 +2,6 @@
 title: Astro Cactus 模板文章格式
 publishDate: "2026-11-13T10:00:00Z"
 ---
----
 title: 文章标题                      # 必填，最长 60 字符
 description: 文章描述                # 必填，没有长度限制
 publishDate: 2026-11-12T12:00:00Z    # 必填，发布日期
@@ -16,4 +15,3 @@ coverImage:                          # 可选，封面图
   src: ./cover.png
   alt: 封面说明
 ogImage: ""                          # 可选，自定义分享图
----
