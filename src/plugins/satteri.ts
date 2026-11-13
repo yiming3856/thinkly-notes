@@ -1,118 +1,84 @@
-import type { Image, Nodes, Parents } from "mdast";
-import { toString as mdastToString } from "mdast-util-to-string";
-import type { HastPluginDefinition, MdastPluginDefinition } from "satteri";
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "@/components/FormattedDate.astro";
 
-export function satteriAutolinkHeadingsPlugin(): HastPluginDefinition {
-	return {
-		name: "cactus-autolink-headings",
-		element: {
-			filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
-			visit(node) {
-				const id = node.properties?.id;
-				if (typeof id !== "string" || !id) return;
-				return {
-					...node,
-					children: [
-						{
-							type: "element",
-							tagName: "a",
-							properties: { href: `#${id}`, className: ["not-prose"] },
-							children: [...node.children],
-						},
-					],
-				};
-			},
-		},
-	};
+interface Props {
+	content: CollectionEntry<"post">;
+	readingTime?: string | undefined;
 }
 
-// 中日韩字符的范围，用来按"字数"而不是"单词数"估算中文阅读时间
-const CJK_RANGE = "\\u3040-\\u30ff\\u3400-\\u4dbf\\u4e00-\\u9fff\\uac00-\\ud7af\\uf900-\\ufaff";
-const CJK_CHAR = new RegExp(`[${CJK_RANGE}]`, "g");
+const {
+	content: { data },
+	readingTime,
+} = Astro.props;
 
-// 阅读速度：中文每分钟 400 字，英文每分钟 200 词，可按自己的习惯调整
-const CJK_CHARS_PER_MINUTE = 400;
-const WORDS_PER_MINUTE = 200;
+// 阅读时间可能是空的（例如文章里没有文字），所以用 ?. 保护，空的时候不显示
+const minutes = readingTime?.match(/\d+/)?.[0];
+const readingTimeText = minutes ? `约 ${minutes} 分钟阅读` : "";
+---
 
-function estimateReadingMinutes(text: string): number {
-	const cjkCount = (text.match(CJK_CHAR) ?? []).length;
-	const latinWords = text.replace(CJK_CHAR, " ").match(/[A-Za-z0-9]+(?:['’-][A-Za-z0-9]+)*/g) ?? [];
-	const minutes = cjkCount / CJK_CHARS_PER_MINUTE + latinWords.length / WORDS_PER_MINUTE;
-	return Math.max(1, Math.round(minutes));
+{
+	data.coverImage && (
+		<div class="mb-6 aspect-video">
+			<Image
+				alt={data.coverImage.alt}
+				layout="constrained"
+				width={748}
+				height={420}
+				priority
+				src={data.coverImage.src}
+			/>
+		</div>
+	)
 }
-
-export function satteriReadingTimePlugin(): () => MdastPluginDefinition {
-	return () => {
-		let done = false;
-		return {
-			name: "cactus-reading-time",
-			text(node, ctx) {
-				if (done) return;
-
-				let root: Readonly<Nodes> = node;
-				let parent: Readonly<Parents> | undefined = ctx.parent(root);
-				while (parent) {
-					root = parent;
-					parent = ctx.parent(root);
-				}
-
-				done = true;
-				const textOnPage = mdastToString(root);
-				const minutes = estimateReadingMinutes(textOnPage);
-
-				ctx.data.astro!.frontmatter.readingTime = `约 ${minutes} 分钟阅读`;
-			},
-		};
-	};
-}
-
-export function satteriUnwrapImagesPlugin(): MdastPluginDefinition {
-	return {
-		name: "cactus-unwrap-images",
-		paragraph(node): Image | undefined {
-			const child = node.children[0];
-			if (node.children.length === 1 && child?.type === "image") {
-				return child;
-			}
-			return;
-		},
-	};
-}
-
-export function satteriFootnoteLabelPlugin(): HastPluginDefinition {
-	return {
-		name: "cactus-footnote-label",
-		element: {
-			filter: ["h2"],
-			visit(node, ctx) {
-				if (node.properties?.id !== "footnote-label") return;
-				ctx.setProperty(node, "className", [""]);
-			},
-		},
-	};
-}
-
-export function satteriExternalLinksPlugin(): HastPluginDefinition {
-	return {
-		name: "cactus-external-links",
-		element: {
-			filter: ["a"],
-			visit(node, ctx) {
-				const href = node.properties?.href;
-				if (typeof href !== "string" || !href) return;
-
-				let url: URL;
-				try {
-					url = new URL(href);
-				} catch {
-					return; // relative path or fragment, not "external"
-				}
-
-				if (url.protocol !== "http:" && url.protocol !== "https:") return;
-
-				ctx.setProperty(node, "rel", ["noreferrer", "noopener"]);
-				ctx.setProperty(node, "target", "_blank");
-			},
-		},
-	};
+{data.draft ? <span class="text-base text-red-500">（草稿）</span> : null}
+<h1 class="title">
+	{data.title}
+</h1>
+<div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+	<p class="font-semibold">
+		<FormattedDate date={data.publishDate} />
+		{readingTimeText && ` / ${readingTimeText}`}
+	</p>
+	{
+		data.updatedDate && (
+			<span class="bg-quote/5 text-quote rounded-lg px-2 py-1">
+				更新于：
+				<FormattedDate class="ms-1" date={data.updatedDate} />
+			</span>
+		)
+	}
+</div>
+{
+	!!data.tags?.length && (
+		<div class="mt-2">
+			<svg
+				aria-hidden="true"
+				class="inline-block h-6 w-6"
+				fill="none"
+				focusable="false"
+				stroke="var(--color-muted)"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="1.5"
+				viewBox="0 0 24 24"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path d="M0 0h24v24H0z" fill="none" stroke="none" />
+				<path d="M7.859 6h-2.834a2.025 2.025 0 0 0 -2.025 2.025v2.834c0 .537 .213 1.052 .593 1.432l6.116 6.116a2.025 2.025 0 0 0 2.864 0l2.834 -2.834a2.025 2.025 0 0 0 0 -2.864l-6.117 -6.116a2.025 2.025 0 0 0 -1.431 -.593z" />
+				<path d="M17.573 18.407l2.834 -2.834a2.025 2.025 0 0 0 0 -2.864l-7.117 -7.116" />
+				<path d="M6 9h-.01" />
+			</svg>
+			{data.tags.map((tag, i) => (
+				<>
+					{/* prettier-ignore */}
+					<span class="contents">
+						<a class="cactus-link inline-block before:content-['#']" data-pagefind-filter={`tag:${tag}`} href={`/tags/${tag}/`}><span class="sr-only">查看更多标签为&nbsp;</span>{tag}
+						</a>{i < data.tags.length - 1 && ", "}
+					</span>
+				</>
+			))}
+		</div>
+	)
 }
