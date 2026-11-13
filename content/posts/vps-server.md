@@ -21,6 +21,8 @@ ssh-keygen -t ed25519 -a 100 -C "your_email@example.com"
 
 - 生成密钥后先用密码登陆服务器，把以下服务器密钥对函数粘贴到服务器里，目的是上传公钥时只需要一条代码即可。
 
+```bash
+
 cat >> ~/.bashrc << 'EOF'
 
 add_ssh_key() {
@@ -55,6 +57,8 @@ add_ssh_key() {
 EOF
 
 source ~/.bashrc
+
+```
 
 - 服务器密钥对函数粘贴后，就可以直接把公钥上传服务器了
 
